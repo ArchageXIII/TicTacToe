@@ -29,6 +29,6 @@ behaviors:
             learning_rate: 0.001
         keep_checkpoints: 100
         checkpoint_interval: 50000
-        max_steps: 1000000
+        max_steps: 2000000
         time_horizon: 20 # max 10 steps in our case How many steps of experience to collect per-agent before adding it to the experience buffer.
         summary_freq: 500 # how often to get updates
