@@ -1,0 +1,34 @@
+behaviors:
+    PlayerX:
+        trainer_type: ppo
+        hyperparameters:
+          batch_size: 10 # Number of experiences in each iteration of gradient descent so 32 runs
+          buffer_size: 100 # Number of experiences to collect before updating the policy model.there is not a lot of variance 10x batch size
+          learning_rate: 0.001 # slow down learning have really small sets to learn from
+          beta: 0.02 ## make really random
+          epsilon: 0.2 # Influences how rapidly the policy can evolve during training
+          lambd: 0.95 #Low values correspond to relying more on the current value estimate (which can be high bias), and high values correspond to relying more on the actual rewards received in the environment (which can be high variance)
+          num_epoch: 3 #Number of passes to make through the experience buffer when performing gradient descent optimization
+          learning_rate_schedule: linear # decay over time until max steps reached
+          beta_schedule: constant # usually tracks learning but want to make sure lost of options explored
+        network_settings:
+          normalize: false # already normalised no need.
+          hidden_units: 128 # the correlation is really simple so keep it small
+          num_layers: 2 # simple problem keep it small
+          vis_encode_type: simple # n/a not doing visual
+        reward_signals:
+          extrinsic:
+            gamma: 0.99 # agent has rewards is very immediate future like 8 steps so set highest
+            strength: 1.0 # Factor by which to multiply the reward given by the environment ours are all normalised -1 to 1
+          rnd:
+            gamma: 0.99 
+            strength: 0.01
+            network_settings:
+              hidden_units: 128 # match main network settings
+              num_layers: 2
+            learning_rate: 0.001
+        keep_checkpoints: 100
+        checkpoint_interval: 50000
+        max_steps: 1000000
+        time_horizon: 20 # max 10 steps in our case How many steps of experience to collect per-agent before adding it to the experience buffer.
+        summary_freq: 500 # how often to get updates
