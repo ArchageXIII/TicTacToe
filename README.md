@@ -45,7 +45,7 @@ I've included the config files I used they can be tuned better I am sure, theres
 * Draw = 0
 * Missed opportunity to win = -0.5 (but keep playing giving -0.5 for each chance missed)
 
-It tool me a long time to come up with this, I tried various strategies for getting the Agent to take
+It took me a long time to come up with this, I tried various strategies for getting the Agent to take
 the fist available win but including turns, rewards that scaled the earlier a win happened, really scaling
 back gamma in the training nothing seemed to influence the agent enough to not wait for better rewards later
 which is fine for a lot fo games but not for this.
