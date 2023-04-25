@@ -7,7 +7,8 @@ Feel free to grab the code and improve it, I couldn't find any nice turn based e
 
 # Video
 I ramble on a bit, it's not a training guide more of a discussion!
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XY5Qqp-CIzk" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+[![Video Title](https://img.youtube.com/vi/XY5Qqp-CIzk/0.jpg)](https://www.youtube.com/watch?v=XY5Qqp-CIzk)
 
 # Installation
 
