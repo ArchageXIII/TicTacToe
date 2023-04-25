@@ -346,13 +346,13 @@ namespace TTT
             if (GameResult == GameResult.xWon)
             {
                 Log.Add(CurrentPlayer + " : GiveRewards : xWon");
-                PlayerX.AddReward(Rewards.PlayerXWin * (Rewards.PlayerXFirstWinTurn / Turn));
+                PlayerX.AddReward(Rewards.PlayerXWin);
                 PlayerO.AddReward(Rewards.PlayerOLost);
             }
             else if (GameResult == GameResult.oWon)
             {
                 Log.Add(CurrentPlayer + " : GiveRewards : OWon");
-                PlayerO.AddReward(Rewards.PlayerOWin * (Rewards.PlayerOFirstWinTurn / Turn));
+                PlayerO.AddReward(Rewards.PlayerOWin); 
                 PlayerX.AddReward(Rewards.PlayerXLost);
             }
             else
@@ -549,6 +549,130 @@ namespace TTT
             {
                 Log.Add(CurrentPlayer + " : MakeHeuristicMove : Not valid move (+1) : " + piece, LogSeverity.warn);
             }
+        }
+
+        /// <summary>
+        /// Helper for CheckCouldWinOnNextMove
+        /// </summary>
+        /// <param name="piecePlace"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        private int PiecePlaceCount(int piecePlace, int player)
+        {
+
+            if (piecePlace == 0)
+            {
+                return 0;
+            }
+            else if (piecePlace == player)
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+
+
+        }
+        /// <summary>
+        /// I tried loads of approaches to encourage the AI to take the first
+        /// available win from rewarding more early to pushing gamma really low in training
+        /// nothing really stopped it from quite often not taking the winning move in case it
+        /// got a better chance later where in this game that's game over playing a human so started penalising
+        /// every time it missed an opportunity to win but let the game continue playing out
+        /// this seems to work well.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public bool CheckCouldWinOnNextMove(Player player)
+        {
+
+            bool couldWinOnNextMove = false;
+
+            int currentPlayer = 1;
+
+            if (player == Player.playerO)
+            {
+                currentPlayer = 2;
+            }
+
+            int c;
+ 
+
+            // Must be nicer way to do this but check if there are
+            // any winning lines
+
+            // checking for any matching rows that are not matching 0's
+
+            int[,] twoDArr = new int[3, 3];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    twoDArr[i, j] = BoardState[i * 3 + j];
+                }
+            }
+
+            // Check rows
+            for (int i = 0; i < 3; i++)
+            {
+                c = 0;
+
+                c += PiecePlaceCount(twoDArr[i, 0], currentPlayer);
+                c += PiecePlaceCount(twoDArr[i, 1], currentPlayer);
+                c += PiecePlaceCount(twoDArr[i, 2], currentPlayer);
+
+                if (c==2)
+                {
+                    couldWinOnNextMove = true;
+                }                
+
+            }
+
+            // Check columns
+            for (int j = 0; j < 3; j++)
+            {
+
+                c = 0;
+
+                c += PiecePlaceCount(twoDArr[0, j], currentPlayer);
+                c += PiecePlaceCount(twoDArr[1, j], currentPlayer);
+                c += PiecePlaceCount(twoDArr[2, j], currentPlayer);
+
+                if (c == 2)
+                {
+                    couldWinOnNextMove = true;
+                }
+            }
+
+            // Check diagonals
+
+
+            c = 0;
+
+            c += PiecePlaceCount(twoDArr[0, 0], currentPlayer);
+            c += PiecePlaceCount(twoDArr[1, 1], currentPlayer);
+            c += PiecePlaceCount(twoDArr[2, 2], currentPlayer);
+
+            if (c == 2)
+            {
+                couldWinOnNextMove = true;
+            }
+
+            c = 0;
+
+            c += PiecePlaceCount(twoDArr[0, 2], currentPlayer);
+            c += PiecePlaceCount(twoDArr[1, 1], currentPlayer);
+            c += PiecePlaceCount(twoDArr[2, 0], currentPlayer);
+
+            if (c == 2)
+            {
+                couldWinOnNextMove = true;
+            }
+
+
+            return couldWinOnNextMove;
         }
 
 

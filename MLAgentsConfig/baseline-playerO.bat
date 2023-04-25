@@ -5,7 +5,5 @@ if errorlevel 1 (
 ) else (
     taskkill /f /im tictactoe.exe
 )
-start /wait "" "mlagents-learn" "baseline.playerO.yaml" "--seed=0" "--run-id=baseline-playerO_Round3" "--initialize-from=baseline-playerO_Round2"  "--env=D:\TicTacToe\Build" "--num-envs=10" "--no-graphics" "--time-scale=20"
+start /wait "" "mlagents-learn" "baseline.playerO.yaml" "--seed=10"   "--run-id=baseline-playerO_Round1"  "--env=D:\TicTacToe\Build" "--num-envs=10" "--no-graphics" "--time-scale=20"
 
-
-#--initialize-from=lander3d_04 

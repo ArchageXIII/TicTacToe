@@ -20,3 +20,4 @@ MonoBehaviour:
   PlayerODraw: 0
   PlayerXFirstWinTurn: 4
   PlayerOFirstWinTurn: 5
+  CouldHaveWon: -0.5

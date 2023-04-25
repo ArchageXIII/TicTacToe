@@ -278,6 +278,12 @@ namespace TTT
 
             if (action > 0 && action < 10)
             {
+
+                bool couldWinThisTurn = Board.CheckCouldWinOnNextMove(Player);
+
+                Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Could Win : " + couldWinThisTurn);
+
+
                 placedPiece = Board.PlacePiece(action);
                 if (!placedPiece)
                 {
@@ -287,11 +293,23 @@ namespace TTT
                 }
                 else
                 {
+
+                    
+                    
                     Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Placed Piece : " + action);
                     Board.GameResult = Board.CheckGameStatus();
 
                     if (Board.GameResult == GameResult.none)
                     {
+                        // if we could have won but didn't give negative reward
+                        // but let game play carry on and not illegal move.
+                        if (couldWinThisTurn)
+                        {
+                            AddReward(Board.Rewards.CouldHaveWon);
+                            Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Could Win but did not : " + GetCumulativeReward());
+
+                        }
+                        
                         Board.GameStatus = GameStatus.ObserveMove;
                     }
                     else

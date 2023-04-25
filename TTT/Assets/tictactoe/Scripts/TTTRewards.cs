@@ -14,8 +14,7 @@ namespace TTT
         public float PlayerOWin = 100.0f;
         public float PlayerOLost = -100.0f;
         public float PlayerODraw = 50.0f;
-        public float PlayerXFirstWinTurn = 4.0f;
-        public float PlayerOFirstWinTurn = 5.0f;
+        public float CouldHaveWon = -0.5f;
 
     }
 
