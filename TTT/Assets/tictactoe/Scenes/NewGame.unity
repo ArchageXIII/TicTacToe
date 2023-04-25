@@ -236,9 +236,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: d841c011160bbc24db13d9a40e9c5462, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 2
   m_BehaviorName: PlayerX
   TeamId: 0
   m_UseChildSensors: 1
@@ -309,10 +309,10 @@ MonoBehaviour:
   Rewards: {fileID: 11400000, guid: 1ec68b013de6bf44a936210e84225c2e, type: 2}
   PlayerX: {fileID: 942386655}
   PlayerO: {fileID: 2082767783}
-  Training: 1
+  Training: 0
   PlayerXRandomFirstTurn: 1
   GameRunSpeed: 1
-  HidePieces: 1
+  HidePieces: 0
   O: {fileID: 919132149155446097, guid: 9070f05ad658673468fe6f4f002a6706, type: 3}
   X: {fileID: 919132149155446097, guid: ee8ea67b70cda554f95042470faa7297, type: 3}
   PiecePositions:
@@ -791,7 +791,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
+  m_BehaviorType: 1
   m_BehaviorName: PlayerO
   TeamId: 1
   m_UseChildSensors: 1

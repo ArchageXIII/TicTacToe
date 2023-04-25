@@ -6,7 +6,8 @@ Turned out to be more convoluted that I was expecting to get working.  The code 
 Feel free to grab the code and improve it, I couldn't find any nice turn based examples when I was looking which is why I did this.
 
 # Video
-I Me giving a quick overview of how the project it layed out and how to set up training [TBC]
+I ramble on a bit, it's not a training guide more of a discussion!
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XY5Qqp-CIzk" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 # Installation
 
@@ -53,6 +54,9 @@ which is fine for a lot fo games but not for this.
 Giving a negative reward but continuing to play really seemed to help, I had avoided doing that to start with as I didn't want to over prescribe it's actions but if I didn't it never got to a point where it consistently took the opportunity as soon as it came up.
 
 ## General Training
+
+Very basic guide [here](./docs/setuptraining.md) and I talk about it in the video.
+
 I trained the agents one at a time against each other because I was having issues with self training returning incorrect actions when training 2 together at a time.  Details in code comments.
 
 I found it really important to force X to train from random start locations even if they were sub optimal because when you later use it to train PlayerO if you don't player O only learns to play against optimal moves and if you play badly as PlayerX you tend to win which is not what we want.
