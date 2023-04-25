@@ -30,14 +30,14 @@ This is not an installation guide but here are a few notes from when I installed
 # Structure
 
 ## Unity project
-The Unity project files are all in [Unity](./Unity/)
+The Unity project files are all in [TTT](https://github.com/ArchageXIII/TicTacToe/tree/main/TTT)
 Only packages are mlagents and text mesh pro which is included
 It's a URP project not that theres anything in there it's just what I tend to use.
 
 All the files are under tictactoe loads of comments in the source and if you turn on logging there is loads of logging but it's designed to show the flow of events.
 
 ## Training config files
-I've included the config files I used they can be tuned better I am sure, theres loads of comments in them here [MLAgentsConfig](./MLAgentsConfig/)
+I've included the config files I used they can be tuned better I am sure, theres loads of comments in them here [MLAgentsConfig](https://github.com/ArchageXIII/TicTacToe/tree/main/MLAgentsConfig)
 
 ## Rewards
 * Win = 1
