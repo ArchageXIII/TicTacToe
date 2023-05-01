@@ -1,9 +1,13 @@
 # TicTacToe
-ML-Agents simple example of turn based unity game for learning
+ML-Agents simple example of turn based unity game for learning work in progress, there are sure to be some bit's that are sub optimal or wrong approach but it does work and the idea is it's a starting place to build on and refine not an example of best practice.
+
+Feel free to grab the code and improve it, I couldn't find any nice turn based examples when I was looking which is why I did this.
 
 Turned out to be more convoluted that I was expecting to get working.  The code is over commented and lots of logging but the idea is for anyone to be able to work through it and get an idea of the flow of events and challenges rather than making a game but you can play it as well.
 
-Feel free to grab the code and improve it, I couldn't find any nice turn based examples when I was looking which is why I did this.
+Main thing I'll do different next time I think is make sure all the player agents make observations at the same time just take no action regardless of if it's their move just to keep everything in sync easier.
+
+Also I want to try out manually stepping academy creating more of an event driven approach rather than the loops on fixed update as I have with this.
 
 # Video
 I ramble on a bit, it's not a training guide more of a discussion! but go over the project setup and code a bit.
@@ -12,9 +16,9 @@ I ramble on a bit, it's not a training guide more of a discussion! but go over t
 
 # Installation
 
-You have installed and run some of the demo projects from Unity's [getting started guide](https://github.com/Unity-Technologies/ml-agents/blob/release_20_docs/docs/Getting-Started.md)
+The expectation is that you have installed and run some of the demo projects from Unity's [getting started guide](https://github.com/Unity-Technologies/ml-agents/blob/release_20_docs/docs/Getting-Started.md)
 
-This is not an installation guide but here are a few notes from when I installed ml-agents on windows over and above the unity guide which you should follow.
+This is not an installation guide but here are a few extra notes from when I installed ml-agents on windows over and above the unity guide.
 
 * Install [miniconda](https://docs.conda.io/en/latest/miniconda.html) everything machine learning I've been working with is very version dependent so I would suggest installing exactly the packages and version you want to run.
 * I used python 3.8
