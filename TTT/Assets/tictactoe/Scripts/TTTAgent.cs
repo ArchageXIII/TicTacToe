@@ -105,7 +105,33 @@ namespace TTT
                 // Each episode and if you have a reference to it you no longer have the current sensor 
                 // Something like that.
                 
-                VSC.GetSensor().AddObservation((float)value / 2);
+                if (value == 1)
+                {
+                    VSC.GetSensor().AddObservation(1.0f);
+                }
+                else
+                {
+                    VSC.GetSensor().AddObservation(0.0f);
+                }
+
+                //VSC.GetSensor().AddObservation((float)value / 2);
+
+            }
+            foreach (int value in Board.BoardState)
+            {
+                // Not sure why we have to call GetSensor() each time but if you do not everything gets out
+                // Of sync and weird, I'm guessing that behind the scenes Academy is perhaps resetting the sensors
+                // Each episode and if you have a reference to it you no longer have the current sensor 
+                // Something like that.
+
+                if (value == 2)
+                {
+                    VSC.GetSensor().AddObservation(1.0f);
+                }
+                else
+                {
+                    VSC.GetSensor().AddObservation(0.0f);
+                }
 
             }
 
@@ -144,18 +170,40 @@ namespace TTT
 
             if (Board.GameStatus == GameStatus.PerformingMove)
             {
-                if (Board.PlayerX && Board.Turn == 0)
+                if (Board.CurrentPlayer == Player.playerX 
+                    && Board.Turn == 0
+                    && Board.PlayerXRandomFirstTurn)
                 {
+                    // don't do fully random let it learn optimum opening move as well
 
-                    for (int i = 1; i < 10; i++)
+                    //40% of time do fully random
+                    if (UnityEngine.Random.Range(0, 10) < 4)
                     {
-                        actionMask.SetActionEnabled(0, i, false);
+                        Board.Log.Add("Agent Player : " + Player + " : WriteDiscreteActionMask : Agent Forced Random First Move");
+                        for (int i = 1; i < 10; i++)
+                        {
+                            actionMask.SetActionEnabled(0, i, false);
+                        }
+
+                        int rnd = UnityEngine.Random.Range(1, 10);
+                        actionMask.SetActionEnabled(0, 0, false);
+                        actionMask.SetActionEnabled(0, rnd, true);
+                        actionMask.SetActionEnabled(0, 10, false);
+                    }
+                    else
+                    // say all moves are available
+                    {
+                        Board.Log.Add("Agent Player : " + Player + " : WriteDiscreteActionMask : Agent Chose First Move");
+                        for (int i = 1; i < availableGamePlayActions.Count(); i++)
+                        {
+                            actionMask.SetActionEnabled(0, 0, false);
+                            actionMask.SetActionEnabled(0, i, availableGamePlayActions[i]);
+                            actionMask.SetActionEnabled(0, 10, false);
+                        }
                     }
 
-                    int rnd = UnityEngine.Random.Range(1, 10);
-                    actionMask.SetActionEnabled(0, 0, false);
-                    actionMask.SetActionEnabled(0, rnd, true);
-                    actionMask.SetActionEnabled(0, 10, false);
+
+
 
                 }
                 else
@@ -275,13 +323,37 @@ namespace TTT
 
             bool placedPiece = false;
 
+            int couldWinThisTurn = 0; ;
+            int missedBlockThisTurn = 0;
+            bool missedBlock = false;
+
 
             if (action > 0 && action < 10)
             {
+                
+                // check current board status need to encourage agent to take actions quickly
+                
+                // if agent could win this turn
+                // if other agent could win (i.e. this agent should block)
 
-                bool couldWinThisTurn = Board.CheckCouldWinOnNextMove(Player);
+                // there could be a case where there are multiple options so returns a count
+
+
+                if (Player == Player.playerX)
+                {
+                    couldWinThisTurn = Board.CheckCouldWinOnNextMove(Player.playerX);
+                    missedBlockThisTurn = Board.CheckCouldWinOnNextMove(Player.playerO);
+                }
+                else
+                {
+                    couldWinThisTurn = Board.CheckCouldWinOnNextMove(Player.playerO);
+                    missedBlockThisTurn = Board.CheckCouldWinOnNextMove(Player.playerX);
+                }
+                
 
                 Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Could Win : " + couldWinThisTurn);
+                Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Could Block : " + missedBlockThisTurn);
+
 
 
                 placedPiece = Board.PlacePiece(action);
@@ -293,23 +365,56 @@ namespace TTT
                 }
                 else
                 {
-
-                    
-                    
                     Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Placed Piece : " + action);
                     Board.GameResult = Board.CheckGameStatus();
 
+                    // if there was no winner or a draw
                     if (Board.GameResult == GameResult.none)
                     {
                         // if we could have won but didn't give negative reward
                         // but let game play carry on and not illegal move.
-                        if (couldWinThisTurn)
+                        // this is main neg reward as should have ended game
+
+                        if (couldWinThisTurn > 0)
                         {
                             AddReward(Board.Rewards.CouldHaveWon);
                             Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Could Win but did not : " + GetCumulativeReward());
 
                         }
-                        
+                        // don't give double neg rewards so it's not confusing for the agent so don't neg if they also missed a block
+                        // as it's most important it learns to win
+
+                        else
+                        {
+                            // if the missed block count is the same give a negative reward but don't double it up
+                            // if there were 2 options to block and the agent got one of them that's fine, will hopefully
+                            // lean to avoid getting in that situation through loosing.
+                            
+                            if (Player == Player.playerX)
+                            {
+                                if (missedBlockThisTurn >0 && missedBlockThisTurn == Board.CheckCouldWinOnNextMove(Player.playerO))
+                                {
+                                    missedBlock = true;
+                                }
+                            }
+                            else
+                            {
+                                if (missedBlockThisTurn > 0 && missedBlockThisTurn == Board.CheckCouldWinOnNextMove(Player.playerX))
+
+                                {
+                                    missedBlock = true;
+                                }
+                            }
+                        }
+
+
+                        if (missedBlock)
+                        {
+                            AddReward(Board.Rewards.CouldHaveBlocked);
+                            Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Could Block but did not : " + GetCumulativeReward());
+
+                        }
+
                         Board.GameStatus = GameStatus.ObserveMove;
                     }
                     else
@@ -338,7 +443,7 @@ namespace TTT
             }
             else
             {
-                Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Invalid action, received : " + action);
+                Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : Invalid action, received : " + action,LogSeverity.warn);
                 Board.ResetGame();
             }
             Board.Log.Add("Agent Player : " + Player + " : OnActionReceived : End");

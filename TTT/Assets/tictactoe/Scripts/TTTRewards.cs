@@ -15,6 +15,7 @@ namespace TTT
         public float PlayerOLost = -100.0f;
         public float PlayerODraw = 50.0f;
         public float CouldHaveWon = -0.5f;
+        public float CouldHaveBlocked = -0.5f;
 
     }
 

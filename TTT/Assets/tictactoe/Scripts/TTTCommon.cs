@@ -40,14 +40,18 @@ namespace TTT
     {
         private bool RealTimeLogging = false;
         private bool RealTimeLogWarningsOnly = true;
-        private bool HasWarnings = false;
+        private bool DumpLogOnWarning = true;
+
+        public bool HasWarnings { get; private set; }
 
         private List<string> logs = new List<string>();
 
-        public LogAll(bool realTimeLogging = false, bool realTimeLogWarningsOnly = true)
+        public LogAll(bool realTimeLogging = false, bool realTimeLogWarningsOnly = true, bool dumpLogOnWarning = true)
         {
             this.RealTimeLogging = realTimeLogging;
             this.RealTimeLogWarningsOnly = realTimeLogWarningsOnly;
+            this.DumpLogOnWarning = dumpLogOnWarning;
+            this.HasWarnings = false;
         }
 
         public void Add(string log, LogSeverity level = LogSeverity.log)
@@ -63,7 +67,7 @@ namespace TTT
 
             }
             
-            string fullLog = string.Format("{0} : {1} : {2} : {3}", level, academyStep, System.Math.Round(Time.fixedTime,2), log);
+            string fullLog = string.Format("{0} : {1} : {2} : {3}", level, academyStep, System.Math.Round(Time.fixedTime,3), log);
 
             logs.Add(fullLog);
 
@@ -90,41 +94,42 @@ namespace TTT
                 }
                 
             }
+
+            if (DumpLogOnWarning)
+            {
+                if (HasWarnings)
+                {
+                    DumpLogs();
+                }
+                
+            }
+
         }
 
         public void DumpLogs()
         {
             if (RealTimeLogging == false)
             {
+
+                Debug.Log("Starting Log Dump : ");
                 foreach (string l in logs)
                 {
                     Debug.Log(l);
                 }
-                
+                Debug.Log("Ending Log Dump : ");
             }
             logs = new List<string>();
+            HasWarnings = false;
 
 
         }
 
-        public void DumpLogIfWarning()
-        {
-            if (RealTimeLogging == false && HasWarnings)
-            {
-                foreach (string l in logs)
-                {
-                    Debug.Log(l);
-                }
 
-            }
-            logs = new List<string>();
-
-
-        }
 
         public void ClearLogs()
         {
             logs = new List<string>();
+            HasWarnings = false;
         }
     }
 

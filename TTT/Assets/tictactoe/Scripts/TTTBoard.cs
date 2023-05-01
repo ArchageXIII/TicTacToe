@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TTT
 {
     /// <summary>
-    /// Main Game Loop controlls everything.
+    /// Main Game Loop controls everything.
     /// </summary>
     public class TTTBoard : MonoBehaviour
     {
@@ -21,11 +21,16 @@ namespace TTT
         public bool RealTimeLogging = false;
         public bool RealTimeLogWarningsOnly = false;
 
+        public bool DebugGame = false;
+
+        // just convenience for looking at self play / also good so you can see Academy steps syncing.
+        public float GameRunSpeed = 1.0f;
+
         // put the rewards in a scriptable object so it's easy to keep test ones around.
 
         public TTTRewards Rewards;
 
-        // referance to the agents
+        // reference to the agents
         public TTTAgent PlayerX;
 
         public TTTAgent PlayerO;
@@ -39,8 +44,7 @@ namespace TTT
         // to defend against optimal attacks, throw a bad move at it and it won't know what to do.
         public bool PlayerXRandomFirstTurn = false;
 
-        // just convenience for looking at self play / also good so you can see Academy steps syncing.
-        public float GameRunSpeed = 1.0f;
+
 
         // no point mass creating and destroying stuff if no one looking
         // helps keep everything stable when running fast loops.
@@ -55,7 +59,7 @@ namespace TTT
 
 
         // main game status I tried this a few ways but 
-        // doing it like this was the easiest to conceptulise and manage for me.
+        // doing it like this was the easiest to conceptualise and manage for me.
         public GameStatus GameStatus { get; set; }
 
         // winners and losers etc.
@@ -67,7 +71,7 @@ namespace TTT
         // opportunity which when playing a human means you just lost.
         public int Turn { get; private set; }
 
-        // little logging calss i put together for this.
+        // little logging class i put together for this.
         public LogAll Log { get; private set; }
 
         // this is where the observations are taken 0 means free space 
@@ -97,7 +101,12 @@ namespace TTT
         {
             Log = new LogAll(RealTimeLogging, RealTimeLogWarningsOnly);
 
-            Time.timeScale = GameRunSpeed;
+            if (DebugGame)
+            {
+                Time.timeScale = GameRunSpeed;
+            }
+
+            
 
             AgentsWorking = false;
 
@@ -107,17 +116,16 @@ namespace TTT
         // reset everything to default state and dump logs if needed.
         private void InitialiseGame()
         {
-            Log.Add(CurrentPlayer + " : InitialiseGame : Start");
-
-
             if (VerboseLogging)
             {
                 Log.DumpLogs();
             }
-            else
-            {
-                Log.DumpLogIfWarning();
-            }
+
+
+
+            Log.ClearLogs();
+            
+            Log.Add(CurrentPlayer + " : InitialiseGame : Start");
 
             Timeout = 0;
 
@@ -132,9 +140,6 @@ namespace TTT
                 GameStatus = GameStatus.WaitingToStart;
             }
 
-
-
-            Log.ClearLogs();
 
             // initial board state all 0 which means all spaces available
             // 1 == playerX 
@@ -362,16 +367,6 @@ namespace TTT
                 PlayerO.AddReward(Rewards.PlayerODraw);
             }
 
-            if (PlayerX.GetCumulativeReward() > Rewards.PlayerXWin)
-            {
-                Log.Add(CurrentPlayer + " : GiveRewards : X Rewards : Over : " + PlayerX.GetCumulativeReward(), LogSeverity.warn);
-            }
-            if (PlayerO.GetCumulativeReward() > Rewards.PlayerXWin)
-            {
-                Log.Add(CurrentPlayer + " : GiveRewards : O Rewards : Over : " + PlayerO.GetCumulativeReward(), LogSeverity.warn);
-            }
-
-
             Log.Add(CurrentPlayer + " : GiveRewards : X Rewards : " + PlayerX.GetCumulativeReward());
             Log.Add(CurrentPlayer + " : GiveRewards : O Rewards : " + PlayerO.GetCumulativeReward());
 
@@ -392,6 +387,11 @@ namespace TTT
 
             // this will make agents revert to AgentStatus.Ready
             // once they initialize again restarting the main game loop
+
+            //if (PlayerO.GetCumulativeReward() < -2)
+            //{
+            //    Log.DumpLogs();
+            //}
 
             PlayerX.EndEpisode();
             PlayerO.EndEpisode();
@@ -585,10 +585,10 @@ namespace TTT
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public bool CheckCouldWinOnNextMove(Player player)
+        public int CheckCouldWinOnNextMove(Player player)
         {
 
-            bool couldWinOnNextMove = false;
+            int couldWinOnNextMove = 0;
 
             int currentPlayer = 1;
 
@@ -623,9 +623,11 @@ namespace TTT
                 c += PiecePlaceCount(twoDArr[i, 1], currentPlayer);
                 c += PiecePlaceCount(twoDArr[i, 2], currentPlayer);
 
+
+
                 if (c==2)
                 {
-                    couldWinOnNextMove = true;
+                    couldWinOnNextMove +=1;
                 }                
 
             }
@@ -642,7 +644,7 @@ namespace TTT
 
                 if (c == 2)
                 {
-                    couldWinOnNextMove = true;
+                    couldWinOnNextMove += 1;
                 }
             }
 
@@ -657,7 +659,7 @@ namespace TTT
 
             if (c == 2)
             {
-                couldWinOnNextMove = true;
+                couldWinOnNextMove +=1;
             }
 
             c = 0;
@@ -668,7 +670,7 @@ namespace TTT
 
             if (c == 2)
             {
-                couldWinOnNextMove = true;
+                couldWinOnNextMove +=1;
             }
 
 

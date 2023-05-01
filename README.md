@@ -6,9 +6,9 @@ Turned out to be more convoluted that I was expecting to get working.  The code 
 Feel free to grab the code and improve it, I couldn't find any nice turn based examples when I was looking which is why I did this.
 
 # Video
-I ramble on a bit, it's not a training guide more of a discussion!
+I ramble on a bit, it's not a training guide more of a discussion! but go over the project setup and code a bit.
 
-[![Video Title](https://img.youtube.com/vi/XY5Qqp-CIzk/0.jpg)](https://www.youtube.com/watch?v=XY5Qqp-CIzk)
+[![Video Title](https://img.youtube.com/vi/FAzSe-eBN8c/0.jpg)](https://www.youtube.com/watch?v=FAzSe-eBN8c)
 
 # Installation
 
@@ -38,39 +38,39 @@ It's a URP project not that theres anything in there it's just what I tend to us
 
 All the files are under tictactoe loads of comments in the source and if you turn on logging there is loads of logging but it's designed to show the flow of events.
 
+## Game Play
+
+If you just want to play the game there is a PlayGame scene where you can play against one of the trained brains, it's got lots of logging turned on by default if you want to see the flow.
+
+Click Reset if you want to change which agent to play or set them to play each other.
+
 ## Training config files
 I've included the config files I used they can be tuned better I am sure, theres loads of comments in them here [MLAgentsConfig](https://github.com/ArchageXIII/TicTacToe/tree/main/MLAgentsConfig)
+
+## Observations
+This was the biggest mistake I make I initially set the observations up as 9 one for each space so both agents could see the same board with 0 for empty, 1 for playerX 2 for playerO normalized to 0.5 and 1 for the observation.
+This sort of worked which was the issue and I spent way to long fiddling with settings, rewards etc. to get it to converge and play well.  It kept missing obvious wins and blocks even tho it looked like it had trained ok.
+
+The training was having a hard time figuring out that 0.5 was X and 1 was O but was close.
+
+I ended up flattening out the board into 18 observations so 9 observations for X with 0 for empty and 1 for X and another 9 observations with 0 for empty and 1 for O which I believe is referred to as one-hot encoding.  Once I had it set up like this everything started working, I didn't have to have overly complicated reward structure or lead the learning as much as I was.
+
 
 ## Rewards
 * Win = 1
 * Lose = -1
-* Draw = 0
-* Missed opportunity to win = -0.5 (but keep playing giving -0.5 for each chance missed)
+* PlayerX Draw = 0
+* PlayerO Draw = 0 
 
-It took me a long time to come up with this, I tried various strategies for getting the Agent to take
-the fist available win but including turns, rewards that scaled the earlier a win happened, really scaling
-back gamma in the training nothing seemed to influence the agent enough to not wait for better rewards later
-which is fine for a lot fo games but not for this.
+ I left these in from when I had the observations set incorrectly and was trying different approaches, it's interesting to see the effects of fiddling with them but with the default example training file I have included there is no need.  The training converges on 0 reward as that is the only outcome if both players don't make a mistake.
 
-Giving a negative reward but continuing to play really seemed to help, I had avoided doing that to start with as I didn't want to over prescribe it's actions but if I didn't it never got to a point where it consistently took the opportunity as soon as it came up.
+* Missed opportunity to win = 0
+* Missed opportunity to block = 0
 
 ## General Training
 
 Very basic guide [here](./docs/setuptraining.md) and I talk about it in the video.
 
-I trained the agents one at a time against each other because I was having issues with self training returning incorrect actions when training 2 together at a time.  Details in code comments.
-
-I found it really important to force X to train from random start locations even if they were sub optimal because when you later use it to train PlayerO if you don't player O only learns to play against optimal moves and if you play badly as PlayerX you tend to win which is not what we want.
-
-General training flow was PlayerX taking a random first move against PlayerO heuristics just giving random valid responses until Player X got the hang of it 3m steps but could have gone for longer.  I need to think about a strategy for initial training for more complex games.
-
-PlayerO the same training against random moves from X for 3m steps.
-
-Then PlayerX against trained PlayerO, Player O against that Trained PlayerX
-
-Back and forth doing that using the last training set to initialize the next set until I got good coverage.
-
-I need to think of a way to automate that if self play is going to be flaky, should be able to batch it some how I'm sure.
 
 
 

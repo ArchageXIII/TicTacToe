@@ -6,9 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/tictactoe/training.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/tictactoe/Scenes/TrainedCheckpointO_v_random.unity
+    guid: 836ad682f59f75642a0331c839d64fa0
   - enabled: 1
-    path: Assets/tictactoe/scenes/NewGame.unity
-    guid: f96daf018273c8c469260f05f1710841
+    path: Assets/tictactoe/Scenes/TrainBoth.unity
+    guid: f5007f026010ba1438a69fc102629bd8
+  - enabled: 0
+    path: Assets/tictactoe/Scenes/TrainX_v_random.unity
+    guid: 926904d650be34e45b0897c95cdf3e3d
+  - enabled: 0
+    path: Assets/tictactoe/Scenes/TrainO_v_XTrained.unity
+    guid: babede325b1389b4582aa33d77e21bc7
   m_configObjects: {}

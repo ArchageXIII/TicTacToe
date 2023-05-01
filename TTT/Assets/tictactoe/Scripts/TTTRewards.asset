@@ -18,6 +18,5 @@ MonoBehaviour:
   PlayerOWin: 1
   PlayerOLost: -1
   PlayerODraw: 0
-  PlayerXFirstWinTurn: 4
-  PlayerOFirstWinTurn: 5
-  CouldHaveWon: -0.5
+  CouldHaveWon: 0
+  CouldHaveBlocked: 0
